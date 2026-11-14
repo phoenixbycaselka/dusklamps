@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dusk Lamps – a daily lights-out puzzle</title>
+<style>
+body{margin:0;background:#14121f;color:#e8e2d0;font-family:system-ui,sans-serif;text-align:center}
+h1{font-weight:300;letter-spacing:.2em;margin:.6em 0 .1em}
+p{margin:.3em;opacity:.8}
+#grid{display:grid;gap:8px;margin:1em auto;width:min(90vw,420px)}
+button.l{aspect-ratio:1;border:0;border-radius:50%;background:#2a2740;cursor:pointer;transition:.2s}
+button.l.on{background:#ffcf5c;box-shadow:0 0 18px #ffb52e}
+button.l:focus-visible{outline:3px solid #8cf}
+.c button{background:#3a3560;color:#eee;border:0;border-radius:6px;padding:.5em 1em;margin:.2em;cursor:pointer}
+#msg{min-height:1.5em;color:#ffcf5c}
+</style></head><body>
+<h1>DUSK LAMPS</h1>
+<p>Tapping a lamp toggles it and its neighbours. Light them all.</p>
+<p>Moves: <b id="mv">0</b> · Par: <b id="par">0</b> · Puzzle: <span id="pz"></span></p>
+<div id="grid"></div><div id="msg"></div>
+<div class="c"><button id="daily">Daily</button><button id="rand">Random</button><button id="reset">Restart</button>
+<button id="sz">Size: 5</button></div>
+<script src="game.js"></script>
+<script>
+let n=5,seed,st,start,moves;
+const g=document.getElementById('grid'),$=id=>document.getElementById(id);
+function load(s){seed=s;const p=Lamps.make(n,s);start=p.state;st=start.slice();moves=0;$('par').textContent=p.par;$('pz').textContent=s;$('msg').textContent='';draw()}
+function draw(){g.style.gridTemplateColumns='repeat('+n+',1fr)';g.innerHTML='';
+st.forEach((v,i)=>{const b=document.createElement('button');b.className='l'+(v?' on':'');b.setAttribute('aria-label','lamp '+(i+1)+(v?' lit':' dark'));
+b.onclick=()=>{Lamps.press(st,n,i);moves++;draw();if(Lamps.won(st))$('msg').textContent='All lit in '+moves+' moves!'};g.appendChild(b)});
+$('mv').textContent=moves}
+$('daily').onclick=()=>load(new Date().toISOString().slice(0,10));
+$('rand').onclick=()=>load(String(Math.floor(Math.random()*1e6)));
+$('reset').onclick=()=>{st=start.slice();moves=0;$('msg').textContent='';draw()};
+$('sz').onclick=()=>{n=n==5?4:n==4?6:5;$('sz').textContent='Size: '+n;load(seed)};
+load(new Date().toISOString().slice(0,10));
+</script></body></html>
