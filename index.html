@@ -9,6 +9,7 @@ p{margin:.3em;opacity:.8}
 button.l{aspect-ratio:1;border:0;border-radius:50%;background:#2a2740;cursor:pointer;transition:.2s}
 button.l.on{background:#ffcf5c;box-shadow:0 0 18px #ffb52e}
 button.l:focus-visible{outline:3px solid #8cf}
+button.l:disabled{cursor:default}
 .c button{background:#3a3560;color:#eee;border:0;border-radius:6px;padding:.5em 1em;margin:.2em;cursor:pointer}
 #msg{min-height:1.5em;color:#ffcf5c}
 </style></head><body>
@@ -20,16 +21,16 @@ button.l:focus-visible{outline:3px solid #8cf}
 <button id="sz">Size: 5</button></div>
 <script src="game.js"></script>
 <script>
-let n=5,seed,st,start,moves,par;
+let n=5,seed,st,start,moves,par,done=false;
 const g=document.getElementById('grid'),$=id=>document.getElementById(id);
-function load(s){seed=s;const p=Lamps.make(n,s);start=p.state;st=start.slice();moves=0;par=p.par;$('par').textContent=p.par;$('pz').textContent=s;$('msg').textContent='';draw()}
+function load(s){seed=s;const p=Lamps.make(n,s);start=p.state;st=start.slice();moves=0;done=false;par=p.par;$('par').textContent=p.par;$('pz').textContent=s;$('msg').textContent='';draw()}
 function draw(){g.style.gridTemplateColumns='repeat('+n+',1fr)';g.innerHTML='';
 st.forEach((v,i)=>{const b=document.createElement('button');b.className='l'+(v?' on':'');b.setAttribute('aria-label','lamp '+(i+1)+(v?' lit':' dark'));
-b.onclick=()=>{Lamps.press(st,n,i);moves++;draw();if(Lamps.won(st))$('msg').textContent='All lit in '+moves+' moves'+(moves<=par?' \u2014 par, the fewest possible!':' (par '+par+').')};g.appendChild(b)});
+b.disabled=done;b.onclick=()=>{if(done)return;Lamps.press(st,n,i);moves++;if(Lamps.won(st))done=true;draw();if(done)$('msg').textContent='All lit in '+moves+' moves'+(moves<=par?' \u2014 par, the fewest possible!':' (par '+par+').')};g.appendChild(b)});
 $('mv').textContent=moves}
 $('daily').onclick=()=>load(new Date().toISOString().slice(0,10));
 $('rand').onclick=()=>load(String(Math.floor(Math.random()*1e6)));
-$('reset').onclick=()=>{st=start.slice();moves=0;$('msg').textContent='';draw()};
+$('reset').onclick=()=>{st=start.slice();moves=0;done=false;$('msg').textContent='';draw()};
 $('sz').onclick=()=>{n=n==5?4:n==4?6:5;$('sz').textContent='Size: '+n;load(seed)};
 load(new Date().toISOString().slice(0,10));
 </script></body></html>
