@@ -28,9 +28,10 @@ function draw(){g.style.gridTemplateColumns='repeat('+n+',1fr)';g.innerHTML='';
 st.forEach((v,i)=>{const b=document.createElement('button');b.className='l'+(v?' on':'');b.setAttribute('aria-label','lamp '+(i+1)+(v?' lit':' dark'));
 b.disabled=done;b.onclick=()=>{if(done)return;Lamps.press(st,n,i);moves++;if(Lamps.won(st))done=true;draw();if(done)$('msg').textContent='All lit in '+moves+' moves'+(moves<=par?' \u2014 par, the fewest possible!':' (par '+par+').')};g.appendChild(b)});
 $('mv').textContent=moves}
-$('daily').onclick=()=>load(new Date().toISOString().slice(0,10));
+function dayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+$('daily').onclick=()=>load(dayKey());
 $('rand').onclick=()=>load(String(Math.floor(Math.random()*1e6)));
 $('reset').onclick=()=>{st=start.slice();moves=0;done=false;$('msg').textContent='';draw()};
 $('sz').onclick=()=>{n=n==5?4:n==4?6:5;$('sz').textContent='Size: '+n;load(seed)};
-load(new Date().toISOString().slice(0,10));
+load(dayKey());
 </script></body></html>
